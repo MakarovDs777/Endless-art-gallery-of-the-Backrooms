@@ -1,59 +1,18 @@
 import random
+from PIL import Image
 
-def generate_image(width, height, colors):
-  """Генерирует случайное изображение с заданными размерами и цветами.
+def generate_rainbow_image(shelf_number, shelf_position):
+    rainbow_colors = [(255, 0, 0), (255, 165, 0), (255, 255, 0), (0, 128, 0), (0, 0, 255), (75, 0, 130), (238, 130, 238)]
+    image_size = (shelf_position * 100, shelf_position * 100)
+    new_image = Image.new('RGB', image_size)
 
-  Args:
-    width: Ширина изображения в пикселях.
-    height: Высота изображения в пикселях.
-    colors: Список цветов, которые будут использоваться в изображении.
+    pixels = new_image.load()
+    for i in range(image_size[0]):
+        for j in range(image_size[1]):
+            pixels[i, j] = random.choice(rainbow_colors)
 
-  Returns:
-    Массив пикселей, представляющий изображение.
-  """
+    new_image.save(f"shelf_{shelf_number}_position_{shelf_position}_rainbow_image.png")
 
-  image = []
-  for _ in range(height):
-    row = []
-    for _ in range(width):
-      row.append(random.choice(colors))
-    image.append(row)
-  return image
-
-
-def save_image(image, filename):
-  """Сохраняет изображение в файл.
-
-  Args:
-    image: Массив пикселей, представляющий изображение.
-    filename: Имя файла, в который будет сохранено изображение.
-  """
-
-  with open(filename, "w") as f:
-    for row in image:
-      for pixel in row:
-        f.write(pixel)
-      f.write("\n")
-
-
-def main():
-  """Точка входа в программу."""
-
-  # Получаем номер этажа, номер полки и номер картины на этой полке.
-  floor = int(input("Введите номер этажа: "))
-  shelf = int(input("Введите номер полки: "))
-  picture = int(input("Введите номер картины на этой полке: "))
-
-  # Генерируем изображение.
-  image = generate_image(floor, shelf, ["0", "1"])
-
-  # Сохраняем изображение в файл.
-  filename = "image_{}_{}_{}.txt".format(floor, shelf, picture)
-  save_image(image, filename)
-
-  # Выводим сообщение об успешном сохранении изображения.
-  print("Изображение успешно сохранено в файл {}.".format(filename))
-
-
-if __name__ == "__main__":
-  main()
+# Пример использования
+generate_rainbow_image(1, 1)  # Генерирует радужное изображение для полки 1, позиция 1
+generate_rainbow_image(1, 3)  # Создает радужное изображение для полки 1, позиция 3
