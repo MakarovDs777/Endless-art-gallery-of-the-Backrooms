@@ -1,4 +1,5 @@
 import random
+import os
 from PIL import Image
 
 def generate_rainbow_image(shelf_number, shelf_position):
@@ -11,7 +12,9 @@ def generate_rainbow_image(shelf_number, shelf_position):
         for j in range(image_size[1]):
             pixels[i, j] = random.choice(rainbow_colors)
 
-    new_image.save(f"shelf_{shelf_number}_position_{shelf_position}_rainbow_image.png")
+    # Убедитесь, что вы заменили "Ваш_Имя_Пользователя" на ваше имя пользователя
+    desktop_path = os.path.join(os.path.expanduser("~/Desktop"), f"shelf_{shelf_number}_position_{shelf_position}_rainbow_image.png")
+    new_image.save(desktop_path)
 
 # Пример использования
 generate_rainbow_image(1, 1)  # Генерирует радужное изображение для полки 1, позиция 1
