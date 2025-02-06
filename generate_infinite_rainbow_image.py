@@ -15,32 +15,41 @@ class InfiniteNoiseImage:
         self.canvas = tk.Canvas(self.root, width=self.image_size[0], height=self.image_size[1])
         self.canvas.pack()
 
-        tk.Label(self.root, text="Скорость обновления (мс):").pack(side="left")
+        # Метка для отображения координат
+        self.coordinates_label = tk.Label(self.root, text=f"Координаты - X: {self.x}, Y: {self.y}, Seed: {self.seed}")
+        self.coordinates_label.pack()
+
+        # Поле ввода скорости обновления
+        tk.Label(self.root, text="Скорость обновления (мс):").pack(side="top", anchor="w")
         self.speed_entry = tk.Entry(self.root)
-        self.speed_entry.pack(side="left")
+        self.speed_entry.pack(side="left", anchor="w")
         self.speed_entry.insert(0, "1000")  # Значение по умолчанию
 
-        self.update_button = tk.Button(self.root, text="Сгенерировать изображение", command=self.update_image)
-        self.update_button.pack()
+        # Панель с кнопками
+        buttons_frame = tk.Frame(self.root)
+        buttons_frame.pack(side="top", anchor="ne")  # Выравнивание по правому верхнему углу
 
-        self.move_button = tk.Button(self.root, text="Авто-обновление", command=self.toggle_auto_move)
-        self.move_button.pack()
+        self.update_button = tk.Button(buttons_frame, text="Сгенерировать изображение", command=self.update_image)
+        self.update_button.pack(side="left", anchor="ne")
 
-        # Добавляем кнопки для перемещения
-        move_buttons_frame = tk.Frame(self.root)
-        move_buttons_frame.pack()
+        self.move_button = tk.Button(buttons_frame, text="Авто-обновление", command=self.toggle_auto_move)
+        self.move_button.pack(side="left", anchor="ne")
+
+        # Добавляем кнопки для перемещения в одной строке
+        move_buttons_frame = tk.Frame(buttons_frame)
+        move_buttons_frame.pack(side="left", anchor="ne")
 
         left_button = tk.Button(move_buttons_frame, text="←", command=self.move_left)
-        left_button.grid(row=0, column=0)
-
-        right_button = tk.Button(move_buttons_frame, text="→", command=self.move_right)
-        right_button.grid(row=0, column=2)
+        left_button.pack(side="left", anchor="ne")
 
         up_button = tk.Button(move_buttons_frame, text="↑", command=self.move_up)
-        up_button.grid(row=0, column=1)
+        up_button.pack(side="left", anchor="ne")
 
         down_button = tk.Button(move_buttons_frame, text="↓", command=self.move_down)
-        down_button.grid(row=2, column=1)
+        down_button.pack(side="left", anchor="ne")
+
+        right_button = tk.Button(move_buttons_frame, text="→", command=self.move_right)
+        right_button.pack(side="left", anchor="ne")
 
         self.image = Image.new('RGB', self.image_size)
 
@@ -58,11 +67,15 @@ class InfiniteNoiseImage:
     def update_image(self):
         self.generate_noise()
         self.update_canvas()
+        self.update_coordinates_display()  # Обновить отображение координат
 
     def update_canvas(self):
         image_tk = ImageTk.PhotoImage(self.image)
         self.canvas.create_image(0, 0, anchor=tk.NW, image=image_tk)
         self.canvas.image = image_tk  # Сохранение ссылки на изображение
+
+    def update_coordinates_display(self):
+        self.coordinates_label.config(text=f"Координаты - X: {self.x}, Y: {self.y}, Seed: {self.seed}")
 
     def toggle_auto_move(self):
         if self.is_moving:
