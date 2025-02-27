@@ -1,5 +1,5 @@
 import random
-from PIL import Image, ImageDraw, ImageTk
+from PIL import Image, ImageTk
 import tkinter as tk
 
 class InfiniteNoiseImage:
@@ -19,54 +19,48 @@ class InfiniteNoiseImage:
         self.coordinates_label = tk.Label(self.root, text=f"Координаты - X: {self.x}, Y: {self.y}, Seed: {self.seed}")
         self.coordinates_label.pack()
 
-        # Поля ввода для координат
-        coordinate_frame = tk.Frame(self.root)
-        coordinate_frame.pack(side="top", anchor="w")
+        # Панель с полями ввода и кнопками (в одну строку)
+        controls_frame = tk.Frame(self.root)
+        controls_frame.pack(side="top", anchor="w", pady=(10, 0))
 
-        tk.Label(coordinate_frame, text="X:").grid(row=0, column=0)
-        self.x_entry = tk.Entry(coordinate_frame, width=5)
+        # Поля ввода для координат
+        tk.Label(controls_frame, text="X:").grid(row=0, column=0)
+        self.x_entry = tk.Entry(controls_frame, width=5)
         self.x_entry.grid(row=0, column=1)
         self.x_entry.insert(0, str(self.x))  # Ввод сида по умолчанию
 
-        tk.Label(coordinate_frame, text="Y:").grid(row=1, column=0)
-        self.y_entry = tk.Entry(coordinate_frame, width=5)
-        self.y_entry.grid(row=1, column=1)
+        tk.Label(controls_frame, text="Y:").grid(row=0, column=2)
+        self.y_entry = tk.Entry(controls_frame, width=5)
+        self.y_entry.grid(row=0, column=3)
         self.y_entry.insert(0, str(self.y))  # Ввод сида по умолчанию
 
-        set_coordinates_button = tk.Button(coordinate_frame, text="Установить координаты", command=self.set_coordinates)
-        set_coordinates_button.grid(row=2, columnspan=2)
+        set_coordinates_button = tk.Button(controls_frame, text="Установить координаты", command=self.set_coordinates)
+        set_coordinates_button.grid(row=0, column=4)
 
-        # Поле ввода скорости обновления
-        tk.Label(self.root, text="Скорость обновления (мс):").pack(side="top", anchor="w")
-        self.speed_entry = tk.Entry(self.root)
-        self.speed_entry.pack(side="left", anchor="w")
+        tk.Label(controls_frame, text="Скорость обновления (мс):").grid(row=0, column=5)
+        self.speed_entry = tk.Entry(controls_frame, width=5)
+        self.speed_entry.grid(row=0, column=6)
         self.speed_entry.insert(0, "1000")  # Значение по умолчанию
 
-        # Панель с кнопками
-        buttons_frame = tk.Frame(self.root)
-        buttons_frame.pack(side="top", anchor="ne")  # Выравнивание по правому верхнему углу
+        # Кнопки для генерации изображения и управления, выровненные справа
+        self.update_button = tk.Button(controls_frame, text="Сгенерировать изображение", command=self.update_image)
+        self.update_button.grid(row=0, column=7, padx=(5, 0))
 
-        self.update_button = tk.Button(buttons_frame, text="Сгенерировать изображение", command=self.update_image)
-        self.update_button.pack(side="left", anchor="ne")
+        self.move_button = tk.Button(controls_frame, text="Авто-обновление", command=self.toggle_auto_move)
+        self.move_button.grid(row=0, column=8, padx=(5, 0))
 
-        self.move_button = tk.Button(buttons_frame, text="Авто-обновление", command=self.toggle_auto_move)
-        self.move_button.pack(side="left", anchor="ne")
+        # Добавление кнопок для перемещения в одной строке
+        left_button = tk.Button(controls_frame, text="←", command=self.move_left)
+        left_button.grid(row=0, column=9, padx=(5, 0))
 
-        # Добавляем кнопки для перемещения в одной строке
-        move_buttons_frame = tk.Frame(buttons_frame)
-        move_buttons_frame.pack(side="left", anchor="ne")
+        up_button = tk.Button(controls_frame, text="↑", command=self.move_up)
+        up_button.grid(row=0, column=10, padx=(5, 0))
 
-        left_button = tk.Button(move_buttons_frame, text="←", command=self.move_left)
-        left_button.pack(side="left", anchor="ne")
+        down_button = tk.Button(controls_frame, text="↓", command=self.move_down)
+        down_button.grid(row=0, column=11, padx=(5, 0))
 
-        up_button = tk.Button(move_buttons_frame, text="↑", command=self.move_up)
-        up_button.pack(side="left", anchor="ne")
-
-        down_button = tk.Button(move_buttons_frame, text="↓", command=self.move_down)
-        down_button.pack(side="left", anchor="ne")
-
-        right_button = tk.Button(move_buttons_frame, text="→", command=self.move_right)
-        right_button.pack(side="left", anchor="ne")
+        right_button = tk.Button(controls_frame, text="→", command=self.move_right)
+        right_button.grid(row=0, column=12, padx=(5, 0))
 
         self.image = Image.new('RGB', self.image_size)
 
@@ -115,26 +109,33 @@ class InfiniteNoiseImage:
 
     def auto_move(self):
         if self.is_moving:
-            self.update_image()  # Обновить изображение цветного шума
+            # Здесь добавляем небольшое смещение по координатам
+            self.x += 1  # Измените на нужное вам значение или на случайное смещение
+            self.update_coordinates_display()  # Обновляем табло координат при движении
+            self.update_image()  # Обновляем изображение с новыми координатами
+
             speed = int(self.speed_entry.get()) if self.speed_entry.get().isdigit() else 1000
             self.root.after(speed, self.auto_move)  # Обновление через `speed` мс
 
     def move_left(self):
         self.x -= 1
+        self.update_coordinates_display()  # Обновляем табло координат после изменения позиции
         self.update_image()
 
     def move_right(self):
         self.x += 1
+        self.update_coordinates_display()  # Обновляем табло координат после изменения позиции
         self.update_image()
 
     def move_up(self):
         self.y += 1
+        self.update_coordinates_display()  # Обновляем табло координат после изменения позиции
         self.update_image()
 
     def move_down(self):
         self.y -= 1
+        self.update_coordinates_display()  # Обновляем табло координат после изменения позиции
         self.update_image()
 
 # Пример использования
 InfiniteNoiseImage()
-
