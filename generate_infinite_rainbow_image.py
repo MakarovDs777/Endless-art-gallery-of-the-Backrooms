@@ -19,6 +19,23 @@ class InfiniteNoiseImage:
         self.coordinates_label = tk.Label(self.root, text=f"Координаты - X: {self.x}, Y: {self.y}, Seed: {self.seed}")
         self.coordinates_label.pack()
 
+        # Поля ввода для координат
+        coordinate_frame = tk.Frame(self.root)
+        coordinate_frame.pack(side="top", anchor="w")
+
+        tk.Label(coordinate_frame, text="X:").grid(row=0, column=0)
+        self.x_entry = tk.Entry(coordinate_frame, width=5)
+        self.x_entry.grid(row=0, column=1)
+        self.x_entry.insert(0, str(self.x))  # Ввод сида по умолчанию
+
+        tk.Label(coordinate_frame, text="Y:").grid(row=1, column=0)
+        self.y_entry = tk.Entry(coordinate_frame, width=5)
+        self.y_entry.grid(row=1, column=1)
+        self.y_entry.insert(0, str(self.y))  # Ввод сида по умолчанию
+
+        set_coordinates_button = tk.Button(coordinate_frame, text="Установить координаты", command=self.set_coordinates)
+        set_coordinates_button.grid(row=2, columnspan=2)
+
         # Поле ввода скорости обновления
         tk.Label(self.root, text="Скорость обновления (мс):").pack(side="top", anchor="w")
         self.speed_entry = tk.Entry(self.root)
@@ -77,6 +94,16 @@ class InfiniteNoiseImage:
     def update_coordinates_display(self):
         self.coordinates_label.config(text=f"Координаты - X: {self.x}, Y: {self.y}, Seed: {self.seed}")
 
+    def set_coordinates(self):
+        try:
+            self.x = int(self.x_entry.get())
+            self.y = int(self.y_entry.get())
+            self.update_image()  # Обновляем изображение при изменении координат
+            self.update_coordinates_display()  # Обновляем табло координат
+        except ValueError:
+            # Игнорировать некорректные значения
+            pass
+
     def toggle_auto_move(self):
         if self.is_moving:
             self.is_moving = False
@@ -110,3 +137,4 @@ class InfiniteNoiseImage:
 
 # Пример использования
 InfiniteNoiseImage()
+
