@@ -109,8 +109,12 @@ class InfiniteNoiseImage:
 
     def auto_move(self):
         if self.is_moving:
-            # Здесь добавляем небольшое смещение по координатам
-            self.x += 1  # Измените на нужное вам значение или на случайное смещение
+            # Генерация случайного смещения для X и Y
+            delta_x = random.randint(-10, 10)  # Случайный сдвиг по X
+            delta_y = random.randint(-10, 10)  # Случайный сдвиг по Y
+            self.x += delta_x
+            self.y += delta_y
+            
             self.update_coordinates_display()  # Обновляем табло координат при движении
             self.update_image()  # Обновляем изображение с новыми координатами
 
